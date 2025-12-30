@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Success - TechStore</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <h1>TechStore</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="cart.html">Cart <span id="cart-count" class="cart-badge">0</span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="success-page">
+            <div class="container">
+                <div class="success-container">
+                    <div class="success-icon">✓</div>
+                    <h1>Order Placed Successfully!</h1>
+                    <p class="success-message">Thank you for your order. Your order has been confirmed.</p>
+
+                    <div id="order-details" class="order-details-box">
+                        <!-- Order details will be loaded here -->
+                    </div>
+
+                    <div class="success-actions">
+                        <a href="products.html" class="btn btn-primary">Continue Shopping</a>
+                        <a href="index.html" class="btn btn-secondary">Back to Home</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TechStore</h3>
+                    <p>Premium electronics and gadgets at the best prices</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@techstore.com</p>
+                    <p>Phone: +91 1234567890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TechStore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            loadOrderDetails();
+            updateCartCount();
+        });
+
+        function loadOrderDetails() {
+            const orderData = localStorage.getItem('lastOrder');
+
+            if (!orderData) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const order = JSON.parse(orderData);
+            const container = document.getElementById('order-details');
+
+            // Generate order number
+            const orderNumber = 'TS' + Date.now().toString().slice(-8);
+
+            // Calculate total
+            const cartItems = {};
+            order.cart.forEach(item => {
+                if (cartItems[item.id]) {
+                    cartItems[item.id].quantity++;
+                } else {
+                    cartItems[item.id] = { ...item, quantity: 1 };
+                }
+            });
+
+            let total = 0;
+            Object.values(cartItems).forEach(item => {
+                total += item.price * item.quantity;
+            });
+
+            let html = `
+                <h2>Order Details</h2>
+                <div class="order-info">
+                    <p><strong>Order Number:</strong> ${orderNumber}</p>
+                    <p><strong>Name:</strong> ${order.name}</p>
+                    <p><strong>Email:</strong> ${order.email}</p>
+                    <p><strong>Phone:</strong> ${order.phone}</p>
+                    <p><strong>Delivery Address:</strong> ${order.address}, ${order.city} - ${order.pincode}</p>
+                    <p><strong>Payment Mode:</strong> ${order.payment.toUpperCase()}</p>
+                </div>
+                <h3>Items Ordered</h3>
+                <div class="ordered-items">
+            `;
+
+            Object.values(cartItems).forEach(item => {
+                html += `
+                    <div class="ordered-item">
+                        <span>${item.name} × ${item.quantity}</span>
+                        <span>₹${item.price * item.quantity}</span>
+                    </div>
+                `;
+            });
+
+            html += `
+                </div>
+                <div class="order-total-final">
+                    <strong>Total Amount: ₹${total}</strong>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+    </script>
+</body>
+</html>

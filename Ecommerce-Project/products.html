@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products - TechStore</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <h1>TechStore</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="products.html" class="active">Products</a></li>
+                    <li><a href="cart.html">Cart <span id="cart-count" class="cart-badge">0</span></a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="products-page">
+            <div class="container">
+                <h1 class="page-title">All Products</h1>
+
+                <!-- Filter Section -->
+                <div class="filter-section">
+                    <button class="filter-btn active" onclick="filterProducts('all')">All</button>
+                    <button class="filter-btn" onclick="filterProducts('Electronics')">Electronics</button>
+                    <button class="filter-btn" onclick="filterProducts('Audio')">Audio</button>
+                    <button class="filter-btn" onclick="filterProducts('Wearables')">Wearables</button>
+                    <button class="filter-btn" onclick="filterProducts('Accessories')">Accessories</button>
+                </div>
+
+                <div id="products-grid" class="product-grid">
+                    <!-- Products will be loaded here by JavaScript -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>TechStore</h3>
+                    <p>Premium electronics and gadgets at the best prices</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="products.html">Products</a></li>
+                        <li><a href="cart.html">Cart</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@techstore.com</p>
+                    <p>Phone: +91 1234567890</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 TechStore. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/products.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // Load all products on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            renderAllProducts();
+            updateCartCount();
+        });
+
+        function renderAllProducts() {
+            const container = document.getElementById('products-grid');
+            container.innerHTML = '';
+
+            products.forEach(product => {
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            });
+        }
+
+        function filterProducts(category) {
+            const container = document.getElementById('products-grid');
+            container.innerHTML = '';
+
+            // Update active button
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            const filtered = category === 'all' 
+                ? products 
+                : products.filter(p => p.category === category);
+
+            filtered.forEach(product => {
+                const productCard = createProductCard(product);
+                container.appendChild(productCard);
+            });
+        }
+
+        function createProductCard(product) {
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.innerHTML = `
+                <div class="product-image">
+                    <img src="${product.image}" alt="${product.name}">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="product-price">₹${product.price}</p>
+                    <div class="product-actions">
+                        <a href="product-details.html?id=${product.id}" class="btn btn-secondary">View Details</a>
+                        <button onclick="addToCart(${product.id})" class="btn btn-primary">Add to Cart</button>
+                    </div>
+                </div>
+            `;
+            return card;
+        }
+    </script>
+</body>
+</html>
